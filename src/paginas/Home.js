@@ -85,13 +85,13 @@ export default class Home extends React.Component {
             <Pagination
               dotsLength={this.state.data.length}
               activeDotIndex={activeSlide}
-              containerStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.75)' }}
+              containerStyle={{ backgroundColor: 'rgba(0, 0, 255, 0.3)' }}
               dotStyle={{
                   width: 10,
                   height: 10,
                   borderRadius: 5,
                   marginHorizontal: 5,
-                  backgroundColor: 'rgba(255, 255, 255, 0.92)'
+                  backgroundColor: 'rgba(0, 0, 0, 0.73)'
               }}
               inactiveDotStyle={{
                   // Define styles for inactive dots here

@@ -1,5 +1,5 @@
 import React from "react";
-import { StatusBar } from "react-native";
+import { StatusBar, Linking } from "react-native";
 import { TouchableOpacity, View, FlatList, TouchableHighlight, Image, ActivityIndicator, StyleSheet } from 'react-native';
 import { 
     Button, 
@@ -20,10 +20,9 @@ import {
   } from "native-base";
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 
-const PUBLIC_KEY = "dd031b32d2f56c990b1425efe6c42ad847e7fe3ab46bf1299f05ecd856bdb7dd";
-const OAuth2 = "54d7307928f63414defd96399fc31ba847961ceaecef3a5fd93144e960c0e151";
-const username = "rusouza";
-const password = "rusouza18";
+const access_token = "";
+const client_id = "502";
+const secret = "Ib12zo9JZ5D3fsrVna9y0h6P8apGgRd9BkSTaoEU";
 
 const styles = StyleSheet.create({
     header: {
@@ -50,22 +49,21 @@ export default class Home extends React.Component {
     }
 
     componentDidMount() {
-        this.callApi();
+        this.loginApi();
     }
 
-    callApi = () => {
-        const url = "https://kitsu.io/api/edge/trending/anime?OAuth2=" + OAuth2 + "&grant_type=password"
-                    + "&username=" + username + "&password=" + password;
+    loginApi = () => {
+        const url = "https://anilist.co/api/v2/oauth/authorize?client_id=" + client_id + "&response_type=token";
                 
         this.loading = true;
-        setTimeout(() => {
-            return fetch(url).then(response => response.json()).then(response => {
-                this.setState({ data: response.data });
-                console.log("response.data = " + response.data);
-            }).catch(error => {
-                        this.loading = false;
-                    })
-                }, 1500);
+
+        Linking.canOpenURL(url).then(supported => {
+            if (!supported) {
+              console.log('Can\'t handle url: ' + url);
+            } else {
+              return Linking.openURL(url).catch(err => console.error('An error occurred', err));
+            }
+        }).catch(err => console.error('An error occurred', err));
     }
 
     _renderItem = ({item, index}) => {
@@ -77,6 +75,10 @@ export default class Home extends React.Component {
                 <Text style={styles.title} numberOfLines={2}>{ item.attributes.canonicalTitle }</Text>
             </View>
         )
+    }
+
+    _onItemPress = (item) => {
+        this.props.navigation.navigate('Descricao', { data: item })
     }
 
     get pagination () {
@@ -102,7 +104,6 @@ export default class Home extends React.Component {
         );
     }
 
-
     render() {
         return (
             <Container>
@@ -121,7 +122,6 @@ export default class Home extends React.Component {
                     <List>
                         <Text style={styles.header} >Animes Mais Assistidos</Text>
                         <Carousel
-                            currentIndex={0}
                             ref={ (c) => { this._carousel = c; } }
                             data={this.state.data}
                             renderItem={this._renderItem.bind(this)}
@@ -129,7 +129,7 @@ export default class Home extends React.Component {
                             itemWidth={350}
                             onSnapToItem={(index) => this.setState({ activeSlide: index }) }
                         />
-                        { this.pagination }
+                        
                     </List>
                 </Content>
             </Container>
